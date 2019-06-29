@@ -1,0 +1,110 @@
+namespace angel_assignment_5{
+	template <typename T>
+	treenode<T>::treenode(const T& data, int key, treenode<T>* left_child, treenode<T>* right_child){
+		treenode<T>::data = data;
+		treenode<T>::key = key;
+		treenode<T>::left_child = left_child;
+		treenode<T>::right_child = right_child;
+	}
+	
+	template <typename T>
+	std::ostream& operator<<(std::ostream& out, const treenode<T>& n){
+		out << n.get_data();
+		return out;
+	}
+	
+	template <typename T>
+	treenode<T>::treenode(const treenode<T>& copy){
+		data = copy.data;	
+		key = copy.key;
+		left_child = nullptr;
+		right_child = nullptr;
+	}
+	
+	template <typename T>
+	treenode<T>& treenode<T>::operator=(const treenode<T>& copy){
+		if(this == &copy)
+			return *this;
+		data = copy.data;
+		key = copy.key;
+		left_child = nullptr;
+		right_child = nullptr;
+	}
+	
+	template <typename T>
+	void bs_tree_insert_root(treenode<T>*& root, int key, const T& data){
+		root = new treenode<T>(data, key);
+	}
+	
+	template <typename T>
+	void bs_tree_insert(treenode<T>*& root, int key, const T& data){
+		if(root == nullptr){
+			bs_tree_insert_root(root, key, data);
+			return;
+		}
+		if(root->get_key() > key)
+			bs_tree_insert(root->get_left(), key, data);
+		else if(root->get_key() < key)
+			bs_tree_insert(root->get_right(), key, data);
+		else
+			root->set_data(data);
+	}
+	
+	//template <typename T>
+	//void bs_tree_remove(treenode<T>*& root, int key);
+	
+	template <typename T>
+	T bs_tree_search(treenode<T>* root, int key){
+		if(root->get_key() > key)
+			return bs_tree_search(root->get_left());
+		else if(root->get_key() < key)
+			return bs_tree_search(root->get_right());
+		else
+			return root->get_data();
+	}
+	
+	template <typename T>
+	void bs_tree_print_helper(treenode<T>* root){
+		if(root != nullptr){
+			bs_tree_print_helper(root->get_left());
+			std::cout << root->get_data() <<  " ";
+			bs_tree_print_helper(root->get_right());
+		}
+	}
+	
+	template <typename T>
+	void bs_tree_print(treenode<T>* root){
+		if(root == nullptr){
+			std::cout << "Empty";
+		}
+		bs_tree_print_helper(root);
+	}
+	
+	template <typename T>
+	void bs_tree_clear(treenode<T>* root){
+		if(root != nullptr){
+			bs_tree_clear(root->get_left());
+			bs_tree_clear(root->get_right());
+			delete root;
+		}
+	}
+	
+	template <typename T>
+	void bs_tree_clear_helper(treenode<T>*& root){
+		bs_tree_clear(root);
+		root = nullptr;
+	}
+	
+	template <typename T>
+	void bs_tree_copy_helper(const treenode<T>* from, treenode<T>*& to){
+		to = bs_tree_copy(from);
+	}
+	
+	template <typename T>
+	treenode<T>* bs_tree_copy(const treenode<T>* root){
+		if(root == nullptr)
+			return nullptr;
+		else
+			return new treenode<T>(root->get_data(), root->get_key(), bs_tree_copy(root->get_left()), bs_tree_copy(root->get_right()));
+	}
+}

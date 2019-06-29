@@ -1,0 +1,108 @@
+namespace angel_assignment_4{
+
+	template <typename T>
+	linkedlist<T>::linkedlist(const linkedlist<T>& copy){
+		headptr = NULL;
+		std::size_t index = 0;
+		for(node<T>* current = copy.headptr; current != NULL; current = current->get_next()){
+			insertAt(index++, current->get_data());
+		}
+	}
+	
+	template <typename T>	
+	linkedlist<T>& linkedlist<T>::operator=(const linkedlist<T>& copy){
+		if(this == &copy)
+			return *this;
+		while(headptr != NULL)
+			removeHead();
+		headptr = NULL;
+		size_t index = 0;
+		for(node<T>* current = copy.headptr; current != NULL; current = current->get_next()){
+			insertAt(index++, current->get_data());
+		}
+		return *this;
+	}
+			
+	template <typename T>
+	linkedlist<T>::~linkedlist(){
+		while(headptr != NULL)
+			removeHead();
+	}
+	
+	template <typename T>
+	void linkedlist<T>::insertHead(const T& data){
+		linkedlist::headptr = new node<T>(data, headptr);
+	}
+	
+	template <typename T>
+	void linkedlist<T>::insertAt(std::size_t index, const T& value){
+		if(index == 0){
+			insertHead(value);
+			return;
+		}
+		node<T>* target = headptr;
+		for(size_t i = index; i != 1; --i)
+			target = target->get_next();
+		target->set_next(new node<T>(value, target->get_next()));
+	}
+			
+	template <typename T>
+	void linkedlist<T>::removeHead(){
+		if(headptr == NULL)
+			return;
+		node<T>* tmp = headptr;
+		headptr = headptr->get_next();
+		delete tmp;
+	}
+			
+	template <typename T>
+	void linkedlist<T>::removeFrom(std::size_t index){
+		if(index == 0){
+			linkedlist<T>::removeHead();
+			return;
+		}
+		node<T>* target = headptr;
+		for(size_t i = index; i != 1; --i)
+			target = target->get_next();
+		node<T>* tmp = target->get_next();
+		target->set_next(tmp->get_next());
+		delete tmp;
+	}
+		
+	template <typename T>	
+	std::size_t linkedlist<T>::size() const{
+		if(headptr == NULL)
+			return 0;
+		size_t count = 0;
+		for(node<T>* current = headptr; current != NULL; current = current->get_next())
+			++count;
+		return count;
+	}
+	
+	template <typename V>
+	std::ostream& operator<<(std::ostream& out, const linkedlist<V>& link){
+		if(link.headptr == NULL)
+			out << "Empty List";
+		else{
+			for(node<V>* current = link.headptr; current != NULL; current = current->get_next())
+				out << *current << " ";
+		}
+		return out;
+	}
+	
+	template <typename T>
+	void linkedlist<T>::update(std::size_t index, const T& value){
+		node<T>* current = headptr;
+		for(std::size_t i = 0; i < index; ++i)
+			current = current->get_next();
+		current->update(value);
+	}
+	
+	template <typename T>
+	void linkedlist<T>::redo(std::size_t index){
+		node<T>* current = headptr;
+		for(std::size_t i = 0; i < index; ++i)
+			current = current->get_next();
+		current->redo();
+	}
+}

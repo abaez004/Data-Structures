@@ -1,0 +1,68 @@
+namespace angel_assignment_5{
+	template <typename T>
+	HashTableT<T>::HashTableT(std::size_t capacity){
+		HashTableT::capacity = capacity;
+		data = new treenode<T>*[capacity];
+		for(int i = 0; i < capacity; ++i)
+			data[i] = nullptr;
+	}
+	
+	template <typename T>
+	HashTableT<T>::HashTableT(const HashTableT& copy){
+		HashTableT<T>::capacity = copy.capacity;
+		for(int i = 0; i < HashTableT<T>::capacity; ++i)
+			bs_tree_copy_helper(copy.data[i], HashTableT<T>::data[i]);
+	}
+	
+	template <typename T>		
+	HashTableT<T>& HashTableT<T>::operator=(const HashTableT<T>& copy){
+		if(this == &copy)
+			return *this;
+		for(int i = 0; i < HashTableT<T>::capacity; ++i)
+			bs_tree_clear_helper(data[i]);
+		delete [] data;
+		HashTableT<T>::capacity = copy.capacity;
+		HashTableT<T>::data = new treenode<T>*[HashTableT<T>::capacity];
+		for(int i = 0; i < HashTableT<T>::capacity; ++i)
+			bs_tree_copy_helper(copy.data[i], HashTableT<T>::data[i]);
+	}
+	
+	template <typename T>		
+	HashTableT<T>::~HashTableT(){
+		for(int i = 0; i < capacity; ++i)
+			bs_tree_clear(data[i]);
+		delete [] data;
+	}	
+	
+	template <typename T>	
+	void HashTableT<T>::put(int key, const T& value){
+		int index = hashFunction(key);
+		bs_tree_insert(data[index], key, value);
+	}
+	
+	template <typename T>
+	T HashTableT<T>::get(int key) const {
+		int index = hashFunction(key);
+		return bs_tree_search(data[index], key);
+	}
+	
+	template <typename T>
+	void HashTableT<T>::remove(int key){
+		int index = hashFunction(key);
+		bs_tree_remove(data[index], key);
+	}
+				
+	template <typename V>
+	std::ostream& operator<<(std::ostream& out, const HashTableT<V>& t){
+		for(std::size_t i = 0; i < t.capacity; ++i){
+			bs_tree_print(t.data[i]);
+			out << "\n";
+		}
+		return out;
+	}
+	
+	template <typename T>
+	int HashTableT<T>::hashFunction(int key){
+		return key % capacity;
+	}
+}

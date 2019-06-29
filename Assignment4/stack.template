@@ -1,0 +1,58 @@
+namespace angel_assignment_4{
+	
+	template <typename T>
+	stack<T>::stack(std::size_t capacity){ 
+		stack::capacity = capacity;
+		used = 0;
+		data = new T[capacity];
+	}
+	
+	template <typename T>
+	stack<T>::stack(const stack<T>& copy){
+		data = new T[copy.capacity];
+		capacity = copy.capacity;		
+		used = copy.used;
+		for(std::size_t i = 0; i < used; ++i)
+			data[i] = copy.data[i];
+	}
+	
+	template <typename T>
+	stack<T>& stack<T>::operator=(const stack<T>& copy){
+		if(this == &copy)
+			return *this;
+		delete [] data;
+		data = new T[copy.capacity];
+		capacity = copy.capacity;
+		used = copy.used;
+		for(std::size_t i = 0; i < used; ++i)
+			data[i] = copy.data[i];
+	}
+	
+	template <typename T>	
+	stack<T>::~stack(){
+		delete [] data;
+	}
+	
+	template <typename T>
+	void stack<T>::push(const T& item){
+		assert(used != capacity);
+		data[used++] = item;
+	}
+	
+	template <typename T>
+	T stack<T>::pop(){
+		assert(!isEmpty());
+		return data[used--];
+	}
+	
+	template <typename T>
+	T stack<T>::peek() const{
+		assert(!isEmpty());
+		return data[used - 1];
+	}
+	
+	template <typename T>
+	bool stack<T>::isEmpty() const {
+		return used == 0;
+	}
+}

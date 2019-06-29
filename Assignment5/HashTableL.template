@@ -1,0 +1,71 @@
+namespace angel_assignment_5{
+	
+	template <typename T>
+	HashTableL<T>::HashTableL(std::size_t capacity){
+			HashTableL::capacity = capacity;
+			data = new node<T>*[capacity];
+			for(int i = 0; i < capacity; ++i)
+				data[i] = nullptr;
+	}
+
+	template <typename T>
+	HashTableL<T>::HashTableL(const HashTableL<T>& copy){
+		HashTableL<T>::capacity = copy.capacity;
+		HashTableL<T>::data = new node<T>*[HashTableL<T>::capacity];
+		for(int i = 0; i < this->capacity; ++i)
+			linkedlist_copy(copy.data[i], HashTableL<T>::data[i]);
+	}
+	
+	template <typename T>		
+	HashTableL<T>& HashTableL<T>::operator=(const HashTableL<T>& copy){
+		if(this == &copy)
+			return this;
+		for(int i = 0; i < HashTableL<T>::capacity; ++i)
+			linkedlist_clear_list(HashTableL<T>::data[i]);
+		delete [] data;
+		HashTableL<T>::capacity = copy.capacity;
+		HashTableL<T>::data = new node<T>*[HashTableL<T>::capacity];
+		for(int i = 0; i < this->capacity; ++i)
+			linkedlist_copy(copy.data[i], HashTableL<T>::data[i]);
+		
+	}
+	
+	template <typename T>		
+	HashTableL<T>::~HashTableL(){
+		for(int i = 0; i < HashTableL<T>::capacity; ++i)
+			linkedlist_clear_list(HashTableL<T>::data[i]);
+		delete [] HashTableL<T>::data;
+	}	
+		
+	template <typename T>	
+	void HashTableL<T>::put(int key, const T& value){
+		int index = hashFunction(key);
+		linkedlist_insert_head(data[index], key, value);
+	}
+	
+	template <typename T>
+	T HashTableL<T>::get(int key) const {
+		int index = hashFunction(key);
+		return linkedlist_key_search(data[index], key);
+	}
+	
+	template <typename T>
+	void HashTableL<T>::remove(int key){
+		int index = hashFunction(key);
+		linkedlist_remove_key(data[index], key);
+	}
+		
+	template <typename V>
+	std::ostream& operator<<(std::ostream& out, const HashTableL<V>& t){
+		for(std::size_t i = 0; i < t.capacity; ++i){
+			linkedlist_print(t.data[i]);
+			out << "\n";
+		}
+		return out;
+	}
+	
+	template <typename T>
+	int HashTableL<T>::hashFunction(int key){
+		return key % capacity;
+	}
+}

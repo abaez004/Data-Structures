@@ -1,0 +1,47 @@
+namespace angel_assignment_4{
+	template <typename T>
+	node<T>::node(const T& data, node* next){
+		node<T>::data = new stack<T>;
+		node<T>::data->push(data);
+		node<T>::next = next;
+	}
+	
+	template <typename T>
+	node<T>::node(const node<T>& copy){
+		data = new stack<T>;
+		data = copy.data;
+		next = NULL;
+	}
+	
+	template <typename T>
+	node<T>& node<T>::operator=(const node<T>& copy){
+		if(this == &copy)
+			return *this;
+		delete data;
+		data = new stack<T>;
+		data = copy.data;
+		next = NULL;
+	}
+	
+	template <typename T>
+	node<T>::~node(){
+		delete data;
+		next = NULL; 
+	}
+	
+	template <typename T>
+	void node<T>::update(const T& data){
+		node<T>::data->push(data);
+	}
+	
+	template <typename T>
+	void node<T>::redo(){
+		data->pop();
+	}
+	
+	template <typename T>
+	std::ostream& operator<<(std::ostream& out, const node<T>& n){
+		out << n.get_data();
+		return out;
+	}
+}

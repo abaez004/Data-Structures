@@ -1,0 +1,154 @@
+namespace angel_assignment_4{
+
+	template <typename T>
+	linkedlistEC<T>::linkedlistEC(node<T>* headptr){
+		linkedlistEC::headptr = new stack<node<T>*>;
+		linkedlistEC::headptr->push(headptr);
+	}
+
+	template <typename T>
+	linkedlistEC<T>::linkedlistEC(const linkedlistEC<T>& copy){
+		headptr = new stack<node<T>*>;
+		node<T>* current = copy.headptr->peek();
+		headptr->push(new node<T>(current->get_data()));
+		node<T>* newCurr = headptr->peek();
+		current = current->get_next();
+		while(current != NULL){
+			newCurr->set_next(new node<T>(current->get_data()));
+			newCurr = newCurr->get_next();
+			current = current->get_next();
+		}
+			
+	}
+	
+	template <typename T>	
+	linkedlistEC<T>& linkedlistEC<T>::operator=(const linkedlistEC<T>& copy){
+		while(!headptr->isEmpty()){
+			node<T>* tmp = headptr->peek();
+			while(tmp != NULL){
+				node<T>* next = tmp->get_next();
+				delete tmp;
+				tmp = next;
+			}
+			headptr->pop();
+		}
+		delete headptr;
+		
+		headptr = new stack<node<T>*>;
+		node<T>* current = copy.headptr->peek();
+		headptr->push(new node<T>(current->get_data()));
+		node<T>* newCurr = headptr->peek();
+		current = current->get_next();
+		while(current != NULL){
+			newCurr->set_next(new node<T>(current->get_data()));
+			newCurr = newCurr->get_next();
+			current = current->get_next();
+		}
+		return *this;
+	}
+			
+	template <typename T>
+	linkedlistEC<T>::~linkedlistEC(){
+		while(!headptr->isEmpty()){
+			node<T>* tmp = headptr->peek();
+			while(tmp != NULL){
+				node<T>* next = tmp->get_next();
+				delete tmp;
+				tmp = next;
+			}
+			headptr->pop();
+		}
+		delete headptr;
+	}
+	
+	template <typename T>
+	void linkedlistEC<T>::insertHead(const T& data){
+		linkedlistEC::headptr->push(new node<T>(data, headptr->peek()));
+	}
+	
+	template <typename T>
+	void linkedlistEC<T>::insertAt(std::size_t index, const T& value){
+		copy();
+		if(index == 0){
+			insertHead(value);
+			return;
+		}
+		node<T>* target = headptr->peek();
+		for(size_t i = index; i != 1; --i)
+			target = target->get_next();
+		target->set_next(new node<T>(value, target->get_next()));
+	}
+			
+	template <typename T>
+	void linkedlistEC<T>::removeHead(){
+		if(headptr->peek() == NULL)
+			return;
+		node<T>* tmp = headptr->peek();
+		headptr->pop();
+		headptr->push(tmp->get_next());
+		delete tmp;
+	}
+			
+	template <typename T>
+	void linkedlistEC<T>::removeFrom(std::size_t index){
+		copy();
+		if(index == 0){
+			linkedlistEC<T>::removeHead();
+			return;
+		}
+		node<T>* target = headptr->peek();
+		for(size_t i = index; i != 1; --i)
+			target = target->get_next();
+		node<T>* tmp = target->get_next();
+		target->set_next(tmp->get_next());
+		delete tmp;
+	}
+		
+	template <typename T>	
+	std::size_t linkedlistEC<T>::size() const{
+		if(headptr->peek() == NULL)
+			return 0;
+		size_t count = 0;
+		for(node<T>* current = headptr->peek(); current != NULL; current = current->get_next())
+			++count;
+		return count;
+	}
+	
+	template <typename V>
+	std::ostream& operator<<(std::ostream& out, const linkedlistEC<V>& link){
+		if(link.headptr->peek() == NULL)
+			out << "Empty List";
+		else{
+			for(node<V>* current = link.headptr->peek(); current != NULL; current = current->get_next())
+				out << *current << " ";
+		}
+		return out;
+	}
+	
+	template <typename T>
+	void linkedlistEC<T>::update(std::size_t index, const T& value){
+		copy();
+		node<T>* current = headptr->peek();
+		for(std::size_t i = 0; i < index; ++i)
+			current = current->get_next();
+		current->update(value);
+	}
+	
+	template <typename T>
+	void linkedlistEC<T>::redo(){
+		headptr->pop();
+	}
+	
+	template <typename T>
+	void linkedlistEC<T>::copy(){
+		node<T>* current = headptr->peek();
+		headptr->push(new node<T>(current->get_data()));
+		node<T>* newCurr = headptr->peek();
+		current = current->get_next();
+		while(current != NULL){
+			newCurr->set_next(new node<T>(current->get_data()));
+			current = current->get_next();
+			newCurr = newCurr->get_next();
+		}
+	}
+}

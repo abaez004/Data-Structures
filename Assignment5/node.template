@@ -1,0 +1,140 @@
+namespace angel_assignment_5{
+	template <typename T>
+	node<T>::node(const T& data, int key, node* next){
+		node<T>::data = data;
+		node<T>::next = next;
+		node<T>::key = key;
+	}
+	
+	template <typename T>
+	node<T>::node(const node<T>& copy){
+		data = copy.data;	
+		key = copy.key;
+		next = nullptr;
+	}
+	
+	template <typename T>
+	node<T>& node<T>::operator=(const node<T>& copy){
+		if(this == &copy)
+			return *this;
+		data = copy.data;
+		key = copy.key;
+		next = nullptr;
+	}
+	
+	template <typename T>
+	node<T>::~node(){
+		next = nullptr; 
+	}
+
+	template <typename T>
+	std::ostream& operator<<(std::ostream& out, const node<T>& n){
+		out << n.get_data();
+		return out;
+	}
+	
+	template <typename T>
+	void linkedlist_clear_list(node<T>*& headptr){
+		while(headptr != nullptr)
+			linkedlist_remove_head(headptr);
+	}
+	
+	template <typename T>
+	void linkedlist_insert(node<T>*& headptr, int key, const T& data){
+		if(headptr == nullptr){
+			linkedlist_insert_head(headptr, key, data);
+			return;
+		}
+		node<T>* current = headptr;
+		if(linkedlist_replace_duplicate_key(headptr, key, data))
+			return;
+		for(int size = linkedlist_size(headptr); size != 1; --size){
+		
+			current = current->get_next();
+		}
+		current->set_next(new node<T>(data, key));
+	}
+	
+	template <typename T>
+	void linkedlist_insert_head(node<T>*& headptr, int key, const T& data){
+			if(linkedlist_replace_duplicate_key(headptr, key, data))
+				return;
+			headptr = new node<T>(data, key, headptr);
+	}
+	
+	template <typename T>
+	void linkedlist_remove_key(node<T>*& headptr, int key){
+		if(headptr->get_key() == key){
+			linkedlist_remove_head(headptr);
+			return;
+		}	
+		int size = linkedlist_size(headptr);
+		for(node<T>* current = headptr; size > 1; --size){
+			if(current->get_next()->get_key() == key){
+				node<T>* temp = current->get_next();
+				current->set_next(temp->get_next());
+				delete temp;
+				return;
+			}
+			current = current->get_next();
+		}
+	}
+	
+	template <typename T>
+	void linkedlist_remove_head(node<T>*& headptr){
+		node<T>* temp = headptr;
+		headptr = temp->get_next();
+		delete temp;
+	}
+	
+	template <typename T>
+	int linkedlist_size(node<T>* headptr){
+		int size = 0;
+		for(node<T>* current = headptr; current != nullptr; ++size){
+			current = current->get_next();	
+		}
+		return size;
+	}
+	
+	template <typename T>
+	T linkedlist_key_search(node<T>* headptr, int key){
+		for(node<T>* current = headptr; current != nullptr; current = current->get_next()){
+			if(current->get_key() == key)
+				return current->get_data();
+		}
+	}	
+	
+	template <typename T>
+	void linkedlist_copy(node<T>* source, node<T>*& destination){
+		destination = nullptr;	
+		while(source != nullptr){
+			linkedlist_insert(destination, source->get_key(), source->get_data());
+			source = source->get_next();
+		}
+	}
+	
+	template <typename T>
+	void linkedlist_print(node<T>* headptr){
+		if(headptr == nullptr)
+			std::cout << "Empty";
+		else{
+			for(int size = linkedlist_size(headptr); size > 0; --size){
+				std::cout << headptr->get_data() << " -> ";
+				headptr = headptr->get_next();
+			}
+		}	
+	}
+	
+	template <typename T>
+	bool linkedlist_replace_duplicate_key(node<T>* headptr, int key, const T& data){
+		node<T>* current = headptr;
+		for(int size = linkedlist_size(headptr); size > 0; --size){
+			if(current->get_key() == key){
+				current->set_data(data);
+				return true;
+			}
+			current = current->get_next();
+		}
+		return false;
+	}
+}
